@@ -23,20 +23,32 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 
-const props = defineProps({
-  year: { type: Number, default: () => new Date().getFullYear() },
-  locale: { type: String, default: () => navigator.language || "en-US" },
-  weekStartsOn: { type: Number, default: 1 }, // 0 Sun, 1 Mon...
-  // optional override map: "YYYY-MM-DD" -> "muted"|"white"|"accent"
-  dots: { type: Object, default: () => ({}) },
-});
+type DotKind = "muted" | "white" | "accent" | "bday";
+type DotsMap = Record<string, DotKind | undefined>;
 
-const pad2 = (n) => String(n).padStart(2, "0");
-const ymd = (d) =>
-    `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+type Cell = { date: Date; key: string } | null;
+type MonthVM = { month: number; title: string; cells: Cell[] };
+
+const props = withDefaults(
+    defineProps<{
+      year?: number;
+      locale?: string;
+      weekStartsOn?: number; // 0 Sun, 1 Mon...
+      dots?: DotsMap;
+    }>(),
+    {
+      year: () => new Date().getFullYear(),
+      locale: () => navigator.language || "en-US",
+      weekStartsOn: 1,
+      dots: () => ({}),
+    }
+);
+
+const pad2 = (n: number) => String(n).padStart(2, "0");
+const ymd = (d: Date) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 
 const today = computed(() => {
   const t = new Date();
@@ -48,10 +60,10 @@ const yearStart = computed(() => new Date(props.year, 0, 1));
 const daysInYear = computed(() => {
   const a = yearStart.value;
   const b = new Date(props.year + 1, 0, 1);
-  return Math.round((b - a) / 86400000);
+  return Math.round((b.getTime() - a.getTime()) / 86400000);
 });
 
-const dayOfYear = (d) => Math.floor((d - yearStart.value) / 86400000) + 1;
+const dayOfYear = (d: Date) => Math.floor((d.getTime() - yearStart.value.getTime()) / 86400000) + 1;
 
 const daysLeft = computed(() => {
   if (today.value.getFullYear() !== props.year) return daysInYear.value;
@@ -64,25 +76,23 @@ const percentDone = computed(() => {
   return Math.round((done / daysInYear.value) * 100);
 });
 
-const startOffset = (date) => {
+const startOffset = (date: Date) => {
   const js = date.getDay(); // 0..6
   return (js - props.weekStartsOn + 7) % 7;
 };
 
-const monthTitleFmt = computed(
-    () => new Intl.DateTimeFormat(props.locale, { month: "short" })
-);
+const monthTitleFmt = computed(() => new Intl.DateTimeFormat(props.locale, { month: "short" }));
 
-const makeMonth = (month) => {
+const makeMonth = (month: number): MonthVM => {
   const first = new Date(props.year, month, 1);
   const next = new Date(props.year, month + 1, 1);
-  const days = Math.round((next - first) / 86400000);
+  const days = Math.round((next.getTime() - first.getTime()) / 86400000);
   const offset = startOffset(first);
 
   const total = offset + days;
   const rows = Math.ceil(total / 7);
 
-  const cells = Array.from({ length: rows * 7 }, (_, i) => {
+  const cells: Cell[] = Array.from({ length: rows * 7 }, (_, i) => {
     const day = i - offset + 1;
     if (day < 1 || day > days) return null;
     const d = new Date(props.year, month, day);
@@ -92,11 +102,9 @@ const makeMonth = (month) => {
   return { month, title: monthTitleFmt.value.format(first), cells };
 };
 
-const months = computed(() =>
-    Array.from({ length: 12 }, (_, m) => makeMonth(m))
-);
+const months = computed(() => Array.from({ length: 12 }, (_, m) => makeMonth(m)));
 
-const dotClass = (cell) => {
+const dotClass = (cell: Cell) => {
   if (!cell) return "is-empty";
 
   const t = today.value;
@@ -106,7 +114,7 @@ const dotClass = (cell) => {
       cell.date.getMonth() === t.getMonth() &&
       cell.date.getDate() === t.getDate();
 
-  // 🎂 15 ноября — розовый (каждый год)
+  // 🎂 15 ноября — розовый (каждый год). (month=10 => ноябрь)
   if (cell.date.getMonth() === 10 && cell.date.getDate() === 15) return "is-bday";
 
   const forced = props.dots[cell.key];
@@ -117,7 +125,6 @@ const dotClass = (cell) => {
   if (time < t.getTime()) return "is-white";
   return "is-muted";
 };
-
 </script>
 
 <style scoped>
@@ -180,9 +187,12 @@ const dotClass = (cell) => {
 
 .yd-dot.is-accent {
   background: var(--accent);
-  box-shadow:
-      0 0 0 2px rgba(255, 106, 0, 0.25),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.yd-dot.is-bday {
+  background: #ff4fd8;
+  box-shadow: 0 0 0 2px rgba(255, 79, 216, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .yd-footer {
@@ -201,11 +211,4 @@ const dotClass = (cell) => {
 .yd-dim {
   color: var(--dim);
 }
-.yd-dot.is-bday {
-  background: #ff4fd8;
-  box-shadow:
-      0 0 0 2px rgba(255, 79, 216, 0.25),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-}
-
 </style>
