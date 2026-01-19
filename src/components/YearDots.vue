@@ -106,17 +106,18 @@ const dotClass = (cell) => {
       cell.date.getMonth() === t.getMonth() &&
       cell.date.getDate() === t.getDate();
 
-  // сначала ручной override, если есть
+  // 🎂 15 ноября — розовый (каждый год)
+  if (cell.date.getMonth() === 10 && cell.date.getDate() === 15) return "is-bday";
+
   const forced = props.dots[cell.key];
   if (forced) return `is-${forced}`;
 
-  // логика как ты описал:
-  // прошедшие дни — белые; сегодня — рыжий; будущие — серые
   if (cell.date.getFullYear() !== props.year) return "is-muted";
   if (isToday) return "is-accent";
   if (time < t.getTime()) return "is-white";
   return "is-muted";
 };
+
 </script>
 
 <style scoped>
@@ -200,4 +201,11 @@ const dotClass = (cell) => {
 .yd-dim {
   color: var(--dim);
 }
+.yd-dot.is-bday {
+  background: #ff4fd8;
+  box-shadow:
+      0 0 0 2px rgba(255, 79, 216, 0.25),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
 </style>
