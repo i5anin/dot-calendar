@@ -24,19 +24,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-
-type DotKind = "muted" | "white" | "accent" | "bday";
-type DotsMap = Record<string, DotKind | undefined>;
-
-type Cell = { date: Date; key: string } | null;
-type MonthVM = { month: number; title: string; cells: Cell[] };
+import { withDefaults, defineProps } from "vue";
+import { useYearCalendar } from "@/composables/useYearCalendar";
+import { getDotClass, type DotsMap } from "@/utils/getDotClass";
 
 const props = withDefaults(
     defineProps<{
       year?: number;
       locale?: string;
-      weekStartsOn?: number; // 0 Sun, 1 Mon...
+      weekStartsOn?: number;
       dots?: DotsMap;
     }>(),
     {
@@ -47,85 +43,13 @@ const props = withDefaults(
     }
 );
 
-const pad2 = (n: number) => String(n).padStart(2, "0");
-const ymd = (d: Date) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+const { today, months, daysLeft, percentDone } =
+    useYearCalendar(props.year, props.locale, props.weekStartsOn);
 
-const today = computed(() => {
-  const t = new Date();
-  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
-});
-
-const yearStart = computed(() => new Date(props.year, 0, 1));
-
-const daysInYear = computed(() => {
-  const a = yearStart.value;
-  const b = new Date(props.year + 1, 0, 1);
-  return Math.round((b.getTime() - a.getTime()) / 86400000);
-});
-
-const dayOfYear = (d: Date) => Math.floor((d.getTime() - yearStart.value.getTime()) / 86400000) + 1;
-
-const daysLeft = computed(() => {
-  if (today.value.getFullYear() !== props.year) return daysInYear.value;
-  return Math.max(0, daysInYear.value - dayOfYear(today.value));
-});
-
-const percentDone = computed(() => {
-  if (today.value.getFullYear() !== props.year) return 0;
-  const done = Math.min(daysInYear.value, Math.max(0, dayOfYear(today.value)));
-  return Math.round((done / daysInYear.value) * 100);
-});
-
-const startOffset = (date: Date) => {
-  const js = date.getDay(); // 0..6
-  return (js - props.weekStartsOn + 7) % 7;
-};
-
-const monthTitleFmt = computed(() => new Intl.DateTimeFormat(props.locale, { month: "short" }));
-
-const makeMonth = (month: number): MonthVM => {
-  const first = new Date(props.year, month, 1);
-  const next = new Date(props.year, month + 1, 1);
-  const days = Math.round((next.getTime() - first.getTime()) / 86400000);
-  const offset = startOffset(first);
-
-  const total = offset + days;
-  const rows = Math.ceil(total / 7);
-
-  const cells: Cell[] = Array.from({ length: rows * 7 }, (_, i) => {
-    const day = i - offset + 1;
-    if (day < 1 || day > days) return null;
-    const d = new Date(props.year, month, day);
-    return { date: d, key: ymd(d) };
-  });
-
-  return { month, title: monthTitleFmt.value.format(first), cells };
-};
-
-const months = computed(() => Array.from({ length: 12 }, (_, m) => makeMonth(m)));
-
-const dotClass = (cell: Cell) => {
-  if (!cell) return "is-empty";
-
-  const t = today.value;
-  const time = cell.date.getTime();
-  const isToday =
-      cell.date.getFullYear() === t.getFullYear() &&
-      cell.date.getMonth() === t.getMonth() &&
-      cell.date.getDate() === t.getDate();
-
-  // 🎂 15 ноября — розовый (каждый год). (month=10 => ноябрь)
-  if (cell.date.getMonth() === 10 && cell.date.getDate() === 15) return "is-bday";
-
-  const forced = props.dots[cell.key];
-  if (forced) return `is-${forced}`;
-
-  if (cell.date.getFullYear() !== props.year) return "is-muted";
-  if (isToday) return "is-accent";
-  if (time < t.getTime()) return "is-white";
-  return "is-muted";
-};
+const dotClass = (cell: any) =>
+    getDotClass(cell, props.year, today.value, props.dots);
 </script>
+
 
 <style scoped>
 .yd-root {
