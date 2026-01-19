@@ -1,18 +1,10 @@
 import { computed } from "vue";
-import {
-    addMonths,
-    differenceInCalendarDays,
-    formatISO,
-    getDay,
-    getDayOfYear,
-    getDaysInYear,
-    startOfToday,
-} from "date-fns";
+import { format, getDay, getDayOfYear, getDaysInMonth, getDaysInYear, startOfToday } from "date-fns";
 
 export type Cell = { date: Date; key: string } | null;
 export type MonthVM = { month: number; title: string; cells: Cell[] };
 
-const ymd = (d: Date) => formatISO(d, { representation: "date" });
+const ymd = (d: Date) => format(d, "yyyy-MM-dd");
 
 export function useYearCalendar(year: number, locale: string, weekStartsOn: number) {
     const today = computed(() => startOfToday());
@@ -36,23 +28,30 @@ export function useYearCalendar(year: number, locale: string, weekStartsOn: numb
 
     const makeMonth = (month: number): MonthVM => {
         const first = new Date(year, month, 1);
-        const next = addMonths(first, 1);
-        const days = differenceInCalendarDays(next, first);
+        const days = getDaysInMonth(first);
 
         const offset = startOffset(first);
         const rows = Math.ceil((offset + days) / 7);
 
-        const cells: Cell[] = Array.from({ length: rows * 7 }, (_, i) => {
+        const cells: Cell[] = new Array(rows * 7);
+        for (let i = 0; i < cells.length; i++) {
             const day = i - offset + 1;
-            if (day < 1 || day > days) return null;
+            if (day < 1 || day > days) {
+                cells[i] = null;
+                continue;
+            }
             const d = new Date(year, month, day);
-            return { date: d, key: ymd(d) };
-        });
+            cells[i] = { date: d, key: ymd(d) };
+        }
 
         return { month, title: monthTitleFmt.format(first), cells };
     };
 
-    const months = computed(() => Array.from({ length: 12 }, (_, m) => makeMonth(m)));
+    const months = computed(() => {
+        const res: MonthVM[] = new Array(12);
+        for (let m = 0; m < 12; m++) res[m] = makeMonth(m);
+        return res;
+    });
 
     return { today, months, daysLeft, percentDone };
 }
