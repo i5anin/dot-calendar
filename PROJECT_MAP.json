@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "2026-10-30T14:47:11.360Z",
+  "project": "dot-calendar",
+  "root": ".",
+  "method": "static-local-index",
+  "limitations": [
+    "Нет динамических вызовов и сетевых интеграций",
+    "Сверять sha256 и evidence.line с текущими исходниками",
+    "Наличие зависимости не доказывает работоспособность"
+  ],
+  "nodes": [
+    {
+      "id": "project:dot-calendar",
+      "type": "project",
+      "name": "dot-calendar"
+    },
+    {
+      "id": "project:dot-calendar/file:README.md",
+      "type": "file",
+      "path": "README.md",
+      "sha256": "309627dbb136135f84b9e5d12c06b4261b9b1f8cb169f8cdb8023f867b7a4165",
+      "bytes": 385
+    },
+    {
+      "id": "project:dot-calendar/file:package.json",
+      "type": "file",
+      "path": "package.json",
+      "sha256": "004de0b3a35bd6b2bb5d4ef17c2a9319ed38c4372eb85996317c2bd289f199bb",
+      "bytes": 343
+    },
+    {
+      "id": "project:dot-calendar/file:src/App.vue",
+      "type": "file",
+      "path": "src/App.vue",
+      "sha256": "a9e1667b5020de79e84b7dd68a1d95ade7d1a8665a5de99c85c0a39571dbdff3",
+      "bytes": 216
+    },
+    {
+      "id": "project:dot-calendar/file:src/components/YearDots.vue",
+      "type": "file",
+      "path": "src/components/YearDots.vue",
+      "sha256": "aa6366dfa2189a07ad7dd2ba1f06f66f1a470fbf4b895c94e689d28d268cb8a6",
+      "bytes": 3063
+    },
+    {
+      "id": "project:dot-calendar/file:src/composables/useYearCalendar.ts",
+      "type": "file",
+      "path": "src/composables/useYearCalendar.ts",
+      "sha256": "b84f64566ee9d2a1f9ae89bf44735fb6c60f5f59ffac068ddc8470c2fd538492",
+      "bytes": 2026
+    },
+    {
+      "id": "project:dot-calendar/file:src/main.js",
+      "type": "file",
+      "path": "src/main.js",
+      "sha256": "ae6eb9de53e72b97ee4c88fe88d2e982bf060266b2b82a0aa29ec859fa342019",
+      "bytes": 111
+    },
+    {
+      "id": "project:dot-calendar/file:src/utils/getDotClass.ts",
+      "type": "file",
+      "path": "src/utils/getDotClass.ts",
+      "sha256": "229db8a90fe8c79c11b10945411326ef1a68cb82db19449f2a5c65711de89d7c",
+      "bytes": 756
+    },
+    {
+      "id": "project:dot-calendar/file:vite.config.js",
+      "type": "file",
+      "path": "vite.config.js",
+      "sha256": "8aa0d41fab2df763c8551c5314353ae1c7081d5f0ac669bd5b0e29176399daa0",
+      "bytes": 276
+    },
+    {
+      "id": "package:npm:date-fns",
+      "type": "package",
+      "name": "date-fns",
+      "ecosystem": "npm"
+    },
+    {
+      "id": "package:npm:vue",
+      "type": "package",
+      "name": "vue",
+      "ecosystem": "npm"
+    },
+    {
+      "id": "package:npm:@vitejs/plugin-vue",
+      "type": "package",
+      "name": "@vitejs/plugin-vue",
+      "ecosystem": "npm"
+    },
+    {
+      "id": "package:npm:vite",
+      "type": "package",
+      "name": "vite",
+      "ecosystem": "npm"
+    }
+  ],
+  "edges": [
+    {
+      "source": "project:dot-calendar",
+      "target": "project:dot-calendar/file:README.md",
+      "relation": "contains",
+      "evidence": {
+        "path": "README.md"
+      },
+      "method": "filesystem"
+    },
+    {
+      "source": "project:dot-calendar",
+      "target": "project:dot-calendar/file:package.json",
+      "relation": "contains",
+      "evidence": {
+        "path": "package.json"
+      },
+      "method": "filesystem"
+    },
+    {
+      "source": "project:dot-calendar",
+      "target": "project:dot-calendar/file:src/App.vue",
+      "relation": "contains",
+      "evidence": {
+        "path": "src/App.vue"
+      },
+      "method": "filesystem"
+    },
+    {
+      "source": "project:dot-calendar",
+      "target": "project:dot-calendar/file:src/components/YearDots.vue",
+      "relation": "contains",
+      "evidence": {
+        "path": "src/components/YearDots.vue"
+      },
+      "method": "filesystem"
+    },
+    {
+      "source": "project:dot-calendar",
+      "target": "project:dot-calendar/file:src/composables/useYearCalendar.ts",
+      "relation": "contains",
+      "evidence": {
+        "path": "src/composables/useYearCalendar.ts"
+      },
+      "method": "filesystem"
+    },
+    {
+      "source": "project:dot-calendar",
+      "target": "project:dot-calendar/file:src/main.js",
+      "relation": "contains",
+      "evidence": {
+        "path": "src/main.js"
+      },
+      "method": "filesystem"
+    },
+    {
+      "source": "project:dot-calendar",
+      "target": "project:dot-calendar/file:src/utils/getDotClass.ts",
+      "relation": "contains",
+      "evidence": {
+        "path": "src/utils/getDotClass.ts"
+      },
+      "method": "filesystem"
+    },
+    {
+      "source": "project:dot-calendar",
+      "target": "project:dot-calendar/file:vite.config.js",
+      "relation": "contains",
+      "evidence": {
+        "path": "vite.config.js"
+      },
+      "method": "filesystem"
+    },
+    {
+      "source": "project:dot-calendar/file:src/App.vue",
+      "target": "project:dot-calendar/file:src/components/YearDots.vue",
+      "relation": "imports_local",
+      "evidence": {
+        "path": "src/App.vue",
+        "line": 2
+      },
+      "method": "lexical-existing-file"
+    },
+    {
+      "source": "project:dot-calendar/file:src/main.js",
+      "target": "project:dot-calendar/file:src/App.vue",
+      "relation": "imports_local",
+      "evidence": {
+        "path": "src/main.js",
+        "line": 3
+      },
+      "method": "lexical-existing-file"
+    },
+    {
+      "source": "project:dot-calendar/file:package.json",
+      "target": "package:npm:date-fns",
+      "relation": "declares_dependency",
+      "kind": "dependencies",
+      "evidence": {
+        "path": "package.json",
+        "line": 12
+      },
+      "method": "manifest"
+    },
+    {
+      "source": "project:dot-calendar/file:package.json",
+      "target": "package:npm:vue",
+      "relation": "declares_dependency",
+      "kind": "dependencies",
+      "evidence": {
+        "path": "package.json",
+        "line": 13
+      },
+      "method": "manifest"
+    },
+    {
+      "source": "project:dot-calendar/file:package.json",
+      "target": "package:npm:@vitejs/plugin-vue",
+      "relation": "declares_dependency",
+      "kind": "devDependencies",
+      "evidence": {
+        "path": "package.json",
+        "line": 16
+      },
+      "method": "manifest"
+    },
+    {
+      "source": "project:dot-calendar/file:package.json",
+      "target": "package:npm:vite",
+      "relation": "declares_dependency",
+      "kind": "devDependencies",
+      "evidence": {
+        "path": "package.json",
+        "line": 7
+      },
+      "method": "manifest"
+    }
+  ]
+}
